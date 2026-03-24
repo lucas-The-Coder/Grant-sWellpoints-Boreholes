@@ -98,8 +98,18 @@
     object-fit: cover;
     object-position: center;
     filter: brightness(1.15) saturate(1.05);
-    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    will-change: transform;
+    transition: opacity 0.6s ease-in-out;
+    will-change: opacity;
+  }
+  
+  #currentSlideImg {
+    opacity: 1;
+    z-index: 1;
+  }
+  
+  #nextSlideImg {
+    opacity: 0;
+    z-index: 2;
   }
 
     .hero-overlay {
@@ -111,13 +121,13 @@
         rgba(5,18,40,0.15) 40%,
         rgba(5,18,40,0.52) 100%
       );
-      z-index: 1;
+      z-index: 3;
     }
 
     .hero-content {
       position: absolute;
       inset: 0;
-      z-index: 2;
+      z-index: 4;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -206,7 +216,7 @@
       bottom: 2rem;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 3;
+      z-index: 5;
       display: flex;
       gap: 0.5rem;
     }
@@ -565,9 +575,9 @@
 
   <!-- HERO SLIDESHOW -->
   <section id="hero">
-    <div class="slideshow-container" id="slideshowContainer">
-      <img class="slide-img" id="currentSlideImg" alt="Grant's Wellpoints & Boreholes" />
-      <img class="slide-img" id="nextSlideImg" alt="Grant's Wellpoints & Boreholes" style="transform: translateX(100%);" />
+    <div class="slideshow-container">
+      <img id="currentSlideImg" class="slide-img" alt="Grant's Wellpoints & Boreholes" />
+      <img id="nextSlideImg" class="slide-img" alt="Grant's Wellpoints & Boreholes" />
     </div>
 
     <div class="hero-overlay"></div>
@@ -744,11 +754,11 @@
               <span>021 701 1786</span>
             </div>
           </a>
-          <a href="/cdn-cgi/l/email-protection#cdaa b8aba4bea7afb8aebfa8bea58da1a4bb a8e3aea2a0" class="contact-item">
+          <a href="/cdn-cgi/l/email-protection#1572657679637a7265776671667d55797c63702d7c7260" class="contact-item">
             <div class="contact-item-icon">✉️</div>
             <div class="contact-item-text">
               <strong>Email</strong>
-              <span><span class="__cf_email__" data-cfemail="375043505f455c5443544552455e775b5e41521954585a">[email&#160;protected]</span></span>
+              <span><span class="__cf_email__" data-cfemail="bddac8dbd4ced7dfc8decfd8ced5fdd1d4cbd893ded2d0">[email&#160;protected]</span></span>
             </div>
           </a>
           <div class="contact-item" style="cursor:default">
@@ -790,7 +800,7 @@
 
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
   <script>
-    // ── SLIDESHOW WITH SLIDING ANIMATION ──
+    // ── FADE SLIDESHOW ──
     const slideImages = [];
     [1,2,3,4,5,6,7,11,14,16,17,18,19,20].forEach(n => slideImages.push(n + '.jpeg'));
 
@@ -810,6 +820,8 @@
     // Initialize first image
     currentImg.src = slideImages[0];
     nextImg.src = slideImages[1 % slideImages.length];
+    currentImg.style.opacity = '1';
+    nextImg.style.opacity = '0';
 
     // Create dots
     for (let i = 0; i < slideImages.length; i++) {
@@ -818,6 +830,7 @@
       dot.addEventListener('click', () => {
         if (!animating && i !== currentIndex) {
           slideTo(i);
+          restartAutoSlide();
         }
       });
       dotsContainer.appendChild(dot);
@@ -837,48 +850,40 @@
       // Ensure newIndex is within bounds
       newIndex = (newIndex + slideImages.length) % slideImages.length;
 
-      // Prepare next image
+      // Set next image source
       nextImg.src = slideImages[newIndex];
-      // Reset next image position to start from right
-      nextImg.style.transform = 'translateX(100%)';
-      nextImg.style.transition = 'none';
+      // Make sure next image starts transparent
+      nextImg.style.opacity = '0';
       // Force reflow
       void nextImg.offsetHeight;
-      // Set transition back
-      nextImg.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
 
-      // Animate current out to left, next in from right
-      currentImg.style.transform = 'translateX(-100%)';
-      nextImg.style.transform = 'translateX(0)';
+      // Fade out current, fade in next
+      currentImg.style.opacity = '0';
+      nextImg.style.opacity = '1';
 
-      // After animation, swap roles and reset positions
-      const onFinish = () => {
-        currentImg.style.transition = 'none';
-        nextImg.style.transition = 'none';
-
-        // Swap images: current becomes the new image, next becomes placeholder
+      // After transition, swap roles and reset opacity
+      const onTransitionEnd = () => {
+        // Swap images: current becomes next, next becomes placeholder
         const tempSrc = currentImg.src;
         currentImg.src = nextImg.src;
         nextImg.src = tempSrc;
 
-        // Reset transforms
-        currentImg.style.transform = 'translateX(0)';
-        nextImg.style.transform = 'translateX(100%)';
-        // Restore transitions
-        currentImg.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-        nextImg.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        // Reset opacities
+        currentImg.style.opacity = '1';
+        nextImg.style.opacity = '0';
 
         currentIndex = newIndex;
         updateDots();
 
         animating = false;
-        // Remove listeners
-        currentImg.removeEventListener('transitionend', onFinish);
-        nextImg.removeEventListener('transitionend', onFinish);
+
+        // Remove event listener
+        currentImg.removeEventListener('transitionend', onTransitionEnd);
+        nextImg.removeEventListener('transitionend', onTransitionEnd);
       };
 
-      currentImg.addEventListener('transitionend', onFinish);
-      nextImg.addEventListener('transitionend', onFinish);
+      currentImg.addEventListener('transitionend', onTransitionEnd);
+      nextImg.addEventListener('transitionend', onTransitionEnd);
     }
 
     function nextSlide() {
@@ -887,31 +892,19 @@
       }
     }
 
-    // Auto-advance every 4 seconds
     function startAutoSlide() {
       if (autoInterval) clearInterval(autoInterval);
       autoInterval = setInterval(() => {
         nextSlide();
       }, 4000);
     }
-    startAutoSlide();
 
-    // Reset auto slide on dot click (optional: restart interval)
     function restartAutoSlide() {
       clearInterval(autoInterval);
       startAutoSlide();
     }
-    // Override dot click to also restart auto
-    const originalDots = dotsContainer.querySelectorAll('.dot');
-    originalDots.forEach((dot, idx) => {
-      dot.removeEventListener('click', () => {});
-      dot.addEventListener('click', () => {
-        if (!animating && idx !== currentIndex) {
-          slideTo(idx);
-          restartAutoSlide();
-        }
-      });
-    });
+
+    startAutoSlide();
 
     // ── NAV scroll effect ──
     window.addEventListener('scroll', () => {
