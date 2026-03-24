@@ -89,9 +89,8 @@
       object-fit: cover;
       object-position: center;
       filter: brightness(1.15) saturate(1.05);
-      transition: opacity 0.5s ease;
+      opacity: 1;
     }
-    #slide-img.fade { opacity: 0; }
 
     .hero-overlay {
       position: absolute;
@@ -780,37 +779,47 @@
 
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     // ── SLIDESHOW ──
-    const images = Array.from({length: 20}, (_, i) => `Pictures/${i + 1}.jpeg`);
-    const imgEl = document.getElementById('slide-img');
-    const dotsContainer = document.getElementById('dots');
-    let current = 0;
-    let timer;
+    var slideImages = [];
+    for (var si = 1; si <= 20; si++) { slideImages.push('Pictures/' + si + '.jpeg'); }
+    var slideImg = document.getElementById('slide-img');
+    var slideDots = document.getElementById('dots');
+    var slideIdx = 0;
+    var slideBusy = false;
 
-    // Build dots
-    images.forEach((_, i) => {
-      const d = document.createElement('div');
-      d.className = 'dot' + (i === 0 ? ' active' : '');
-      d.addEventListener('click', () => goTo(i));
-      dotsContainer.appendChild(d);
-    });
-
-    function goTo(n) {
-      const next = (n + images.length) % images.length;
-      if (next === current) return;
-      // fade out
-      imgEl.classList.add('fade');
-      setTimeout(() => {
-        // swap src while invisible, then fade back in
-        current = next;
-        imgEl.src = images[current];
-        document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
-        imgEl.classList.remove('fade');
-      }, 500);
-      clearInterval(timer);
-      timer = setInterval(() => goTo(current + 1), 1500);
+    for (var di = 0; di < slideImages.length; di++) {
+      var dot = document.createElement('div');
+      dot.className = di === 0 ? 'dot active' : 'dot';
+      (function(idx) {
+        dot.addEventListener('click', function() { slideAdvance(idx); });
+      })(di);
+      slideDots.appendChild(dot);
     }
 
-    timer = setInterval(() => goTo(current + 1), 1500);
+    function slideUpdateDots() {
+      var dots = slideDots.querySelectorAll('.dot');
+      for (var i = 0; i < dots.length; i++) {
+        dots[i].className = i === slideIdx ? 'dot active' : 'dot';
+      }
+    }
+
+    function slideAdvance(next) {
+      if (slideBusy) return;
+      next = ((next % slideImages.length) + slideImages.length) % slideImages.length;
+      slideBusy = true;
+      slideImg.style.transition = 'opacity 0.5s ease';
+      slideImg.style.opacity = '0';
+      setTimeout(function() {
+        slideIdx = next;
+        slideImg.src = slideImages[slideIdx];
+        slideUpdateDots();
+        slideImg.style.opacity = '1';
+        setTimeout(function() { slideBusy = false; }, 550);
+      }, 500);
+    }
+
+    setInterval(function() {
+      slideAdvance((slideIdx + 1) % slideImages.length);
+    }, 1500);
 
     // ── NAV scroll effect ──
     window.addEventListener('scroll', () => {
