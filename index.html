@@ -79,20 +79,27 @@
     height: 100vh;
     min-height: 600px;
     overflow: hidden;
-    background: #0D2B5C; /* prevents white flash during slide transitions */
+    background: #0D2B5C; /* prevents white flash during transitions */
   }
   
-  /* ── SLIDESHOW IMAGE ── */
-  #slide-img {
+  /* SLIDESHOW CONTAINER */
+  .slideshow-container {
     position: absolute;
     inset: 0;
+    overflow: hidden;
+  }
+  
+  .slide-img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center;
     filter: brightness(1.15) saturate(1.05);
-    opacity: 1;
-    transition: opacity 0.5s ease-in-out;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
   }
 
     .hero-overlay {
@@ -211,8 +218,6 @@
       transition: background 0.3s, transform 0.3s;
     }
     .dot.active { background: var(--cyan); transform: scale(1.3); }
-
-    /* arrows removed — auto-only slideshow */
 
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(28px); }
@@ -560,7 +565,10 @@
 
   <!-- HERO SLIDESHOW -->
   <section id="hero">
-    <img id="slide-img" src="1.jpeg" alt="Grant's Wellpoints & Boreholes" />
+    <div class="slideshow-container" id="slideshowContainer">
+      <img class="slide-img" id="currentSlideImg" alt="Grant's Wellpoints & Boreholes" />
+      <img class="slide-img" id="nextSlideImg" alt="Grant's Wellpoints & Boreholes" style="transform: translateX(100%);" />
+    </div>
 
     <div class="hero-overlay"></div>
 
@@ -736,11 +744,11 @@
               <span>021 701 1786</span>
             </div>
           </a>
-          <a href="/cdn-cgi/l/email-protection#4b2c3e2d2238222b2e3c2f2a3d220b27223d2e65282426" class="contact-item">
+          <a href="/cdn-cgi/l/email-protection#cdaa b8aba4bea7afb8aebfa8bea58da1a4bb a8e3aea2a0" class="contact-item">
             <div class="contact-item-icon">✉️</div>
             <div class="contact-item-text">
               <strong>Email</strong>
-              <span><span class="__cf_email__" data-cfemail="f49781929d879e9681958493879cb4989d8291da979b99">[email&#160;protected]</span></span>
+              <span><span class="__cf_email__" data-cfemail="375043505f455c5443544552455e775b5e41521954585a">[email&#160;protected]</span></span>
             </div>
           </a>
           <div class="contact-item" style="cursor:default">
@@ -782,77 +790,138 @@
 
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
   <script>
-     // ── SLIDESHOW ──
-     var slideImages = [];
-     [1,2,3,4,5,6,7,11,14,16,17,18,19,20]
-       .forEach(function(n){ slideImages.push(n + '.jpeg'); });
-     
-     var slideImg = document.getElementById('slide-img');
-     var slideDots = document.getElementById('dots');
-     var slideIdx = 0;
-     var slideBusy = false;
-     
-     // Preload all images to avoid flicker
-     for (var i = 0; i < slideImages.length; i++) {
-       var img = new Image();
-       img.src = slideImages[i];
-     }
-     
-     // Set initial image correctly
-     slideImg.src = slideImages[0];
-     
-     // Create dots
-     for (var di = 0; di < slideImages.length; di++) {
-       var dot = document.createElement('div');
-       dot.className = di === 0 ? 'dot active' : 'dot';
-       (function(idx) {
-         dot.addEventListener('click', function() {
-           if (idx !== slideIdx && !slideBusy) slideAdvance(idx);
-         });
-       })(di);
-       slideDots.appendChild(dot);
-     }
-     
-     function slideUpdateDots() {
-       var dots = slideDots.querySelectorAll('.dot');
-       for (var i = 0; i < dots.length; i++) {
-         dots[i].className = i === slideIdx ? 'dot active' : 'dot';
-       }
-     }
-     
-     function slideAdvance(next) {
-       if (slideBusy) return;
-       slideBusy = true;
-       next = (next + slideImages.length) % slideImages.length;
-       
-       slideImg.style.opacity = 0;
-       setTimeout(function () {
-         slideIdx = next;
-         slideImg.src = slideImages[slideIdx];
-         slideUpdateDots();
-         requestAnimationFrame(function () {
-           slideImg.style.opacity = 1;
-         });
-         setTimeout(function () {
-           slideBusy = false;
-         }, 500);
-       }, 500);
-     }
-     
-     // Auto advance every 4 seconds
-     setInterval(function () {
-       slideAdvance(slideIdx + 1);
-     }, 4000);
-     
-     // ── NAV scroll effect ──
-     window.addEventListener('scroll', () => {
-       const nav = document.querySelector('nav');
-       if (window.scrollY > 80) {
-         nav.style.background = 'rgba(8,26,58,0.99)';
-       } else {
-         nav.style.background = 'rgba(8,26,58,0.96)';
-       }
-     });
+    // ── SLIDESHOW WITH SLIDING ANIMATION ──
+    const slideImages = [];
+    [1,2,3,4,5,6,7,11,14,16,17,18,19,20].forEach(n => slideImages.push(n + '.jpeg'));
+
+    const currentImg = document.getElementById('currentSlideImg');
+    const nextImg = document.getElementById('nextSlideImg');
+    const dotsContainer = document.getElementById('dots');
+    let currentIndex = 0;
+    let animating = false;
+    let autoInterval;
+
+    // Preload all images
+    for (let i = 0; i < slideImages.length; i++) {
+      const img = new Image();
+      img.src = slideImages[i];
+    }
+
+    // Initialize first image
+    currentImg.src = slideImages[0];
+    nextImg.src = slideImages[1 % slideImages.length];
+
+    // Create dots
+    for (let i = 0; i < slideImages.length; i++) {
+      const dot = document.createElement('div');
+      dot.className = i === 0 ? 'dot active' : 'dot';
+      dot.addEventListener('click', () => {
+        if (!animating && i !== currentIndex) {
+          slideTo(i);
+        }
+      });
+      dotsContainer.appendChild(dot);
+    }
+
+    function updateDots() {
+      const dots = dotsContainer.querySelectorAll('.dot');
+      dots.forEach((dot, idx) => {
+        dot.className = idx === currentIndex ? 'dot active' : 'dot';
+      });
+    }
+
+    function slideTo(newIndex) {
+      if (animating) return;
+      animating = true;
+
+      // Ensure newIndex is within bounds
+      newIndex = (newIndex + slideImages.length) % slideImages.length;
+
+      // Prepare next image
+      nextImg.src = slideImages[newIndex];
+      // Reset next image position to start from right
+      nextImg.style.transform = 'translateX(100%)';
+      nextImg.style.transition = 'none';
+      // Force reflow
+      void nextImg.offsetHeight;
+      // Set transition back
+      nextImg.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+
+      // Animate current out to left, next in from right
+      currentImg.style.transform = 'translateX(-100%)';
+      nextImg.style.transform = 'translateX(0)';
+
+      // After animation, swap roles and reset positions
+      const onFinish = () => {
+        currentImg.style.transition = 'none';
+        nextImg.style.transition = 'none';
+
+        // Swap images: current becomes the new image, next becomes placeholder
+        const tempSrc = currentImg.src;
+        currentImg.src = nextImg.src;
+        nextImg.src = tempSrc;
+
+        // Reset transforms
+        currentImg.style.transform = 'translateX(0)';
+        nextImg.style.transform = 'translateX(100%)';
+        // Restore transitions
+        currentImg.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        nextImg.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+
+        currentIndex = newIndex;
+        updateDots();
+
+        animating = false;
+        // Remove listeners
+        currentImg.removeEventListener('transitionend', onFinish);
+        nextImg.removeEventListener('transitionend', onFinish);
+      };
+
+      currentImg.addEventListener('transitionend', onFinish);
+      nextImg.addEventListener('transitionend', onFinish);
+    }
+
+    function nextSlide() {
+      if (!animating) {
+        slideTo(currentIndex + 1);
+      }
+    }
+
+    // Auto-advance every 4 seconds
+    function startAutoSlide() {
+      if (autoInterval) clearInterval(autoInterval);
+      autoInterval = setInterval(() => {
+        nextSlide();
+      }, 4000);
+    }
+    startAutoSlide();
+
+    // Reset auto slide on dot click (optional: restart interval)
+    function restartAutoSlide() {
+      clearInterval(autoInterval);
+      startAutoSlide();
+    }
+    // Override dot click to also restart auto
+    const originalDots = dotsContainer.querySelectorAll('.dot');
+    originalDots.forEach((dot, idx) => {
+      dot.removeEventListener('click', () => {});
+      dot.addEventListener('click', () => {
+        if (!animating && idx !== currentIndex) {
+          slideTo(idx);
+          restartAutoSlide();
+        }
+      });
+    });
+
+    // ── NAV scroll effect ──
+    window.addEventListener('scroll', () => {
+      const nav = document.querySelector('nav');
+      if (window.scrollY > 80) {
+        nav.style.background = 'rgba(8,26,58,0.99)';
+      } else {
+        nav.style.background = 'rgba(8,26,58,0.96)';
+      }
+    });
   </script>
 </body>
 </html>
