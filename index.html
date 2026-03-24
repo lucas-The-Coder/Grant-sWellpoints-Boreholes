@@ -559,7 +559,6 @@
 
   <!-- HERO SLIDESHOW -->
   <section id="hero">
-    <!-- Fixed: removed multiple src attributes, now correctly loads first image -->
     <img id="slide-img" src="1.jpeg" alt="Grant's Wellpoints & Boreholes" />
 
     <div class="hero-overlay"></div>
@@ -736,11 +735,11 @@
               <span>021 701 1786</span>
             </div>
           </a>
-          <a href="/cdn-cgi/l/email-protection#620516050a101913051403140f00220e0b14074c010d0f" class="contact-item">
+          <a href="/cdn-cgi/l/email-protection#7314051619041c1503140512051e331f1a05165d101c1e" class="contact-item">
             <div class="contact-item-icon">✉️</div>
             <div class="contact-item-text">
               <strong>Email</strong>
-              <span><span class="__cf_email__" data-cfemail="1176657679637a7265776671667d113d38677e">[email&#160;protected]</span></span>
+              <span><span class="__cf_email__" data-cfemail="aec9dbccc3d9c0c8dfc9d8cfd9c2eedadfc0d380cdc1c3">[email&#160;protected]</span></span>
             </div>
           </a>
           <div class="contact-item" style="cursor:default">
@@ -782,7 +781,7 @@
 
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
   <script>
-     // ── SLIDESHOW (FIXED) ──
+     // ── SLIDESHOW ──
      var slideImages = [];
      [1,2,3,4,5,6,7,11,14,16,17,18,19,20]
        .forEach(function(n){ slideImages.push(n + '.jpeg'); });
@@ -798,7 +797,7 @@
        img.src = slideImages[i];
      }
      
-     // Set initial image correctly (already set to 1.jpeg in HTML, but ensure consistency)
+     // Set initial image correctly
      slideImg.src = slideImages[0];
      
      // Create dots
@@ -839,10 +838,10 @@
        }, 500);
      }
      
-     // Auto advance every 1.5 seconds
+     // Auto advance every 4 seconds (updated from 1.5s)
      setInterval(function () {
        slideAdvance(slideIdx + 1);
-     }, 1500);
+     }, 4000);
      
      // ── NAV scroll effect ──
      window.addEventListener('scroll', () => {
@@ -853,10 +852,6 @@
          nav.style.background = 'rgba(8,26,58,0.96)';
        }
      });
-
-     // ── Animate sections on scroll (FIXED: removed broken code) ──
-     // (IntersectionObserver code was incomplete and causing script errors.
-     // It has been removed to ensure slideshow and other scripts work correctly.)
   </script>
 </body>
 </html>
