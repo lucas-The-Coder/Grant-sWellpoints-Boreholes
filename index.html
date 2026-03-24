@@ -79,10 +79,9 @@
     height: 100vh;
     min-height: 600px;
     overflow: hidden;
-    background: #0D2B5C; /* prevents white flash during transitions */
+    background: #0D2B5C; /* prevents white flash */
   }
   
-  /* SLIDESHOW CONTAINER */
   .slideshow-container {
     position: absolute;
     inset: 0;
@@ -102,14 +101,19 @@
     will-change: opacity;
   }
   
-  #currentSlideImg {
-    opacity: 1;
-    z-index: 1;
+  #img1, #img2 {
+    opacity: 0;
   }
   
-  #nextSlideImg {
-    opacity: 0;
+  /* active image gets higher z-index and opacity 1 */
+  .img-active {
     z-index: 2;
+    opacity: 1;
+  }
+  
+  .img-inactive {
+    z-index: 1;
+    opacity: 0;
   }
 
     .hero-overlay {
@@ -576,8 +580,8 @@
   <!-- HERO SLIDESHOW -->
   <section id="hero">
     <div class="slideshow-container">
-      <img id="currentSlideImg" class="slide-img" alt="Grant's Wellpoints & Boreholes" />
-      <img id="nextSlideImg" class="slide-img" alt="Grant's Wellpoints & Boreholes" />
+      <img id="img1" class="slide-img img-active" alt="Grant's Wellpoints & Boreholes" />
+      <img id="img2" class="slide-img img-inactive" alt="Grant's Wellpoints & Boreholes" />
     </div>
 
     <div class="hero-overlay"></div>
@@ -754,11 +758,11 @@
               <span>021 701 1786</span>
             </div>
           </a>
-          <a href="/cdn-cgi/l/email-protection#1572657679637a7265776671667d55797c63702d7c7260" class="contact-item">
+          <a href="/cdn-cgi/l/email-protection#5730243738223b33243322352239173b3e21327934383a" class="contact-item">
             <div class="contact-item-icon">✉️</div>
             <div class="contact-item-text">
               <strong>Email</strong>
-              <span><span class="__cf_email__" data-cfemail="bddac8dbd4ced7dfc8decfd8ced5fdd1d4cbd893ded2d0">[email&#160;protected]</span></span>
+              <span><span class="__cf_email__" data-cfemail="3f584a59564c555d4a5c4d5a4c577f53564b580f525c5e">[email&#160;protected]</span></span>
             </div>
           </a>
           <div class="contact-item" style="cursor:default">
@@ -800,12 +804,12 @@
 
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
   <script>
-    // ── FADE SLIDESHOW ──
+    // ── CROSSFADE SLIDESHOW (no flashing) ──
     const slideImages = [];
     [1,2,3,4,5,6,7,11,14,16,17,18,19,20].forEach(n => slideImages.push(n + '.jpeg'));
 
-    const currentImg = document.getElementById('currentSlideImg');
-    const nextImg = document.getElementById('nextSlideImg');
+    const img1 = document.getElementById('img1');
+    const img2 = document.getElementById('img2');
     const dotsContainer = document.getElementById('dots');
     let currentIndex = 0;
     let animating = false;
@@ -817,11 +821,13 @@
       img.src = slideImages[i];
     }
 
-    // Initialize first image
-    currentImg.src = slideImages[0];
-    nextImg.src = slideImages[1 % slideImages.length];
-    currentImg.style.opacity = '1';
-    nextImg.style.opacity = '0';
+    // Initialize: img1 active with first image
+    img1.src = slideImages[0];
+    img2.src = slideImages[1 % slideImages.length];
+    img1.classList.add('img-active');
+    img1.classList.remove('img-inactive');
+    img2.classList.add('img-inactive');
+    img2.classList.remove('img-active');
 
     // Create dots
     for (let i = 0; i < slideImages.length; i++) {
@@ -847,56 +853,58 @@
       if (animating) return;
       animating = true;
 
-      // Ensure newIndex is within bounds
-      newIndex = (newIndex + slideImages.length) % slideImages.length;
+      // Determine which image is currently active and which is hidden
+      const activeImg = img1.classList.contains('img-active') ? img1 : img2;
+      const hiddenImg = (activeImg === img1) ? img2 : img1;
 
-      // Set next image source
-      nextImg.src = slideImages[newIndex];
-      // Make sure next image starts transparent
-      nextImg.style.opacity = '0';
+      // Set the hidden image's src to the new image
+      hiddenImg.src = slideImages[newIndex];
+
+      // Ensure hidden image is at opacity 0 before starting
+      hiddenImg.style.opacity = '0';
       // Force reflow
-      void nextImg.offsetHeight;
+      void hiddenImg.offsetHeight;
 
-      // Fade out current, fade in next
-      currentImg.style.opacity = '0';
-      nextImg.style.opacity = '1';
-
-      // After transition, swap roles and reset opacity
+      // Add transitionend listener to swap roles after fade completes
       const onTransitionEnd = () => {
-        // Swap images: current becomes next, next becomes placeholder
-        const tempSrc = currentImg.src;
-        currentImg.src = nextImg.src;
-        nextImg.src = tempSrc;
+        // After transition, the hidden image is now fully visible.
+        // Swap classes: make hidden image active, active image inactive.
+        activeImg.classList.remove('img-active');
+        activeImg.classList.add('img-inactive');
+        hiddenImg.classList.remove('img-inactive');
+        hiddenImg.classList.add('img-active');
 
-        // Reset opacities
-        currentImg.style.opacity = '1';
-        nextImg.style.opacity = '0';
+        // Reset opacity for the now-inactive image (so it's ready for next fade)
+        activeImg.style.opacity = '';
+        hiddenImg.style.opacity = '';
 
         currentIndex = newIndex;
         updateDots();
-
         animating = false;
 
-        // Remove event listener
-        currentImg.removeEventListener('transitionend', onTransitionEnd);
-        nextImg.removeEventListener('transitionend', onTransitionEnd);
+        // Remove event listeners
+        activeImg.removeEventListener('transitionend', onTransitionEnd);
+        hiddenImg.removeEventListener('transitionend', onTransitionEnd);
       };
 
-      currentImg.addEventListener('transitionend', onTransitionEnd);
-      nextImg.addEventListener('transitionend', onTransitionEnd);
+      // Add event listener to both images (to catch whichever ends)
+      activeImg.addEventListener('transitionend', onTransitionEnd);
+      hiddenImg.addEventListener('transitionend', onTransitionEnd);
+
+      // Start fade: active image fades out, hidden image fades in
+      activeImg.style.opacity = '0';
+      hiddenImg.style.opacity = '1';
     }
 
     function nextSlide() {
       if (!animating) {
-        slideTo(currentIndex + 1);
+        slideTo((currentIndex + 1) % slideImages.length);
       }
     }
 
     function startAutoSlide() {
       if (autoInterval) clearInterval(autoInterval);
-      autoInterval = setInterval(() => {
-        nextSlide();
-      }, 4000);
+      autoInterval = setInterval(nextSlide, 4000);
     }
 
     function restartAutoSlide() {
