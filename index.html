@@ -93,7 +93,7 @@
     }
     .slide.active { opacity: 1; }
 
-    /* Slides reference pictures/1.jpeg … pictures/20.jpeg */
+    /* Slides reference Pictures/1.jpeg … Pictures/20.jpeg */
     .slide:nth-child(1)  { background-image: url('Pictures/1.jpeg'); }
     .slide:nth-child(2)  { background-image: url('Pictures/2.jpeg'); }
     .slide:nth-child(3)  { background-image: url('Pictures/3.jpeg'); }
@@ -107,6 +107,7 @@
     .slide:nth-child(11) { background-image: url('Pictures/11.jpeg'); }
     .slide:nth-child(12) { background-image: url('Pictures/12.jpeg'); }
     .slide:nth-child(13) { background-image: url('Pictures/13.jpeg'); }
+    .slide:nth-child(14) { background-image: url('Pictures/14.jpeg'); }
     .slide:nth-child(15) { background-image: url('Pictures/15.jpeg'); }
     .slide:nth-child(16) { background-image: url('Pictures/16.jpeg'); }
     .slide:nth-child(17) { background-image: url('Pictures/17.jpeg'); }
@@ -118,10 +119,10 @@
       position: absolute;
       inset: 0;
       background: linear-gradient(
-        135deg,
-        rgba(8,26,58,0.82) 0%,
-        rgba(13,43,92,0.65) 50%,
-        rgba(0,174,239,0.18) 100%
+        to bottom,
+        rgba(8,26,58,0.55) 0%,
+        rgba(8,26,58,0.25) 40%,
+        rgba(8,26,58,0.55) 100%
       );
       z-index: 1;
     }
@@ -229,25 +230,7 @@
     }
     .dot.active { background: var(--cyan); transform: scale(1.3); }
 
-    /* slide arrows */
-    .slide-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 3;
-      background: rgba(8,26,58,0.55);
-      border: 1px solid rgba(0,174,239,0.35);
-      color: var(--white);
-      width: 44px; height: 44px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      font-size: 1.3rem;
-      transition: background 0.2s;
-    }
-    .slide-arrow:hover { background: rgba(0,174,239,0.5); }
-    .slide-arrow.prev { left: 1.5rem; }
-    .slide-arrow.next { right: 1.5rem; }
+    /* arrows removed — auto-only slideshow */
 
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(28px); }
@@ -550,7 +533,7 @@
 
   <!-- NAV -->
   <nav>
-    <img src="logo.png" alt="Grant's Wellpoints & Boreholes" class="nav-logo" />
+    <img src="Logo.png" alt="Grant's Wellpoints & Boreholes" class="nav-logo" />
     <ul>
       <li><a href="#services">Services</a></li>
       <li><a href="#about">About</a></li>
@@ -586,7 +569,7 @@
     <div class="hero-overlay"></div>
 
     <div class="hero-content">
-      <img src="logo.png" alt="Grant's Wellpoints & Boreholes" class="hero-logo" />
+      <img src="Logo.png" alt="Grant's Wellpoints & Boreholes" class="hero-logo" />
       <p class="hero-tagline">New Installations · Repairs · Re-sleeving · Pumps · Filtration</p>
       <p class="hero-sub">Professional borehole and wellpoint solutions for Cape Town homes, farms and businesses. Clean, reliable workmanship with guidance aligned to City of Cape Town requirements.</p>
       <div class="hero-btns">
@@ -595,8 +578,6 @@
       </div>
     </div>
 
-    <button class="slide-arrow prev" onclick="changeSlide(-1)">&#8249;</button>
-    <button class="slide-arrow next" onclick="changeSlide(1)">&#8250;</button>
     <div class="slide-dots" id="dots"></div>
   </section>
 
@@ -759,11 +740,11 @@
               <span>021 701 1786</span>
             </div>
           </a>
-          <a href="mailto:grantmeredith@live.com" class="contact-item">
+          <a href="/cdn-cgi/l/email-protection#117663707f657c74637475786579517d7867743f727e7c" class="contact-item">
             <div class="contact-item-icon">✉️</div>
             <div class="contact-item-text">
               <strong>Email</strong>
-              <span>grantmeredith@live.com</span>
+              <span><span class="__cf_email__" data-cfemail="0b6c796a657f666e796e6f627f634b67627d6e25686466">[email&#160;protected]</span></span>
             </div>
           </a>
           <div class="contact-item" style="cursor:default">
@@ -797,13 +778,13 @@
 
   <!-- FOOTER -->
   <footer>
-    <img src="logo.png" alt="Grant's Wellpoints & Boreholes" />
+    <img src="Logo.png" alt="Grant's Wellpoints & Boreholes" />
     <p class="footer-compliance">Alternative (non-potable) water systems are subject to City of Cape Town regulations. Borehole and wellpoint water must be clearly identified where required. All installations should comply with the City of Cape Town Water By-law.</p>
     <div class="footer-divider"></div>
     <p class="footer-credit">© 2025 Grant's Wellpoints &amp; Boreholes · Grant Meredith · 072 408 0842<br/>Website by <a href="#">Dennisys (Pty) Ltd</a></p>
   </footer>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     // ── SLIDESHOW ──
     const slides = document.querySelectorAll('.slide');
     const dotsContainer = document.getElementById('dots');
@@ -826,8 +807,6 @@
       document.querySelectorAll('.dot')[current].classList.add('active');
       resetTimer();
     }
-
-    function changeSlide(dir) { goTo(current + dir); }
 
     function resetTimer() {
       clearInterval(timer);
@@ -856,12 +835,4 @@
       });
     }, { threshold: 0.12 });
 
-    document.querySelectorAll('.service-card, .strategy-card, .stat-box, .contact-item').forEach(el => {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(24px)';
-      el.style.transition = 'opacity 0.55s ease, transform 0.55s ease';
-      observer.observe(el);
-    });
-  </script>
-</body>
-</html>
+    document.querySelectorAll('.service-card, .strategy-card, .stat-b
