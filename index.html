@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grant's Wellpoints & Boreholes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:    #0D2B5C;
+      --blue:    #1565C0;
+      --cyan:    #00AEEF;
+      --light-cyan: #5DD5FF;
+      --white:   #FFFFFF;
+      --off-white: #F4F8FC;
+      --mid-grey: #8CA0B8;
+      --dark:    #081A3A;
+      --text:    #1A2A40;
+      --accent:  #00AEEF;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--white);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5%;
+      height: 72px;
+      background: rgba(8,26,58,0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0,174,239,0.18);
+    }
+    nav img.nav-logo { height: 42px; object-fit: contain; }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+    nav ul li a {
+      color: var(--white);
+      text-decoration: none;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      opacity: 0.85;
+      transition: opacity 0.2s, color 0.2s;
+    }
+    nav ul li a:hover { opacity: 1; color: var(--cyan); }
+    .nav-cta {
+      background: var(--cyan);
+      color: var(--navy) !important;
+      padding: 0.45rem 1.1rem;
+      border-radius: 4px;
+      opacity: 1 !important;
+      font-weight: 700 !important;
+    }
+    .nav-cta:hover { background: var(--light-cyan) !important; }
+
+    /* ── HERO / SLIDESHOW ── */
+    #hero {
+      position: relative;
+      height: 100vh;
+      min-height: 600px;
+      overflow: hidden;
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 1.2s ease;
+      background-size: cover;        /* always fills the frame */
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+    .slide.active { opacity: 1; }
+
+    /* Slides reference pictures/1.jpeg … pictures/20.jpeg */
+    .slide:nth-child(1)  { background-image: url('pictures/1.jpeg'); }
+    .slide:nth-child(2)  { background-image: url('pictures/2.jpeg'); }
+    .slide:nth-child(3)  { background-image: url('pictures/3.jpeg'); }
+    .slide:nth-child(4)  { background-image: url('pictures/4.jpeg'); }
+    .slide:nth-child(5)  { background-image: url('pictures/5.jpeg'); }
+    .slide:nth-child(6)  { background-image: url('pictures/6.jpeg'); }
+    .slide:nth-child(7)  { background-image: url('pictures/7.jpeg'); }
+    .slide:nth-child(8)  { background-image: url('pictures/8.jpeg'); }
+    .slide:nth-child(9)  { background-image: url('pictures/9.jpeg'); }
+    .slide:nth-child(10) { background-image: url('pictures/10.jpeg'); }
+    .slide:nth-child(11) { background-image: url('pictures/11.jpeg'); }
+    .slide:nth-child(12) { background-image: url('pictures/12.jpeg'); }
+    .slide:nth-child(13) { background-image: url('pictures/13.jpeg'); }
+    .slide:nth-child(14) { background-image: url('pictures/14.jpeg'); }
+    .slide:nth-child(15) { background-image: url('pictures/15.jpeg'); }
+    .slide:nth-child(16) { background-image: url('pictures/16.jpeg'); }
+    .slide:nth-child(17) { background-image: url('pictures/17.jpeg'); }
+    .slide:nth-child(18) { background-image: url('pictures/18.jpeg'); }
+    .slide:nth-child(19) { background-image: url('pictures/19.jpeg'); }
+    .slide:nth-child(20) { background-image: url('pictures/20.jpeg'); }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(8,26,58,0.82) 0%,
+        rgba(13,43,92,0.65) 50%,
+        rgba(0,174,239,0.18) 100%
+      );
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      padding-top: 72px;
+    }
+
+    .hero-content img.hero-logo {
+      width: min(480px, 80vw);
+      margin-bottom: 2rem;
+      filter: drop-shadow(0 4px 24px rgba(0,0,0,0.45));
+      animation: fadeUp 0.9s ease both;
+    }
+
+    .hero-tagline {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(1.1rem, 3vw, 1.6rem);
+      font-weight: 600;
+      color: var(--cyan);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      animation: fadeUp 0.9s 0.2s ease both;
+    }
+
+    .hero-sub {
+      font-size: clamp(0.95rem, 2vw, 1.1rem);
+      color: rgba(255,255,255,0.82);
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 2.2rem;
+      animation: fadeUp 0.9s 0.35s ease both;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp 0.9s 0.5s ease both;
+    }
+
+    .btn-primary {
+      background: var(--cyan);
+      color: var(--navy);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.85rem 2rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--light-cyan); transform: translateY(-2px); }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--white);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.85rem 2rem;
+      border: 2px solid rgba(255,255,255,0.55);
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: border-color 0.2s, color 0.2s, transform 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--cyan); color: var(--cyan); transform: translateY(-2px); }
+
+    /* slide dots */
+    .slide-dots {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      display: flex;
+      gap: 0.5rem;
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .dot.active { background: var(--cyan); transform: scale(1.3); }
+
+    /* slide arrows */
+    .slide-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 3;
+      background: rgba(8,26,58,0.55);
+      border: 1px solid rgba(0,174,239,0.35);
+      color: var(--white);
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 1.3rem;
+      transition: background 0.2s;
+    }
+    .slide-arrow:hover { background: rgba(0,174,239,0.5); }
+    .slide-arrow.prev { left: 1.5rem; }
+    .slide-arrow.next { right: 1.5rem; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── SECTION BASE ── */
+    section { padding: 5rem 5%; }
+    .section-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 0.6rem;
+    }
+    .section-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(2rem, 4.5vw, 3rem);
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+    .section-title span { color: var(--cyan); }
+    .section-body {
+      font-size: 1.05rem;
+      color: #4A5B72;
+      line-height: 1.75;
+      max-width: 600px;
+    }
+
+    /* ── SERVICES STRIP ── */
+    #services { background: var(--off-white); }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+    .service-card {
+      background: var(--white);
+      border-radius: 10px;
+      padding: 2rem 1.6rem;
+      border-top: 4px solid var(--cyan);
+      box-shadow: 0 2px 18px rgba(13,43,92,0.07);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .service-card:hover { transform: translateY(-5px); box-shadow: 0 8px 32px rgba(13,43,92,0.13); }
+    .service-icon {
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .service-card h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .service-card p { font-size: 0.93rem; color: #5A6B82; line-height: 1.6; }
+
+    /* ── ABOUT ── */
+    #about {
+      background: var(--navy);
+      color: var(--white);
+    }
+    #about .section-title { color: var(--white); }
+    #about .section-body { color: rgba(255,255,255,0.78); max-width: 700px; }
+    .about-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+    @media (max-width: 768px) { .about-inner { grid-template-columns: 1fr; gap: 2.5rem; } }
+
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+    .stat-box {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(0,174,239,0.25);
+      border-radius: 10px;
+      padding: 1.4rem 1.2rem;
+      text-align: center;
+    }
+    .stat-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 2.4rem;
+      font-weight: 900;
+      color: var(--cyan);
+      line-height: 1;
+    }
+    .stat-label { font-size: 0.82rem; color: rgba(255,255,255,0.6); margin-top: 0.3rem; }
+
+    .about-checklist { list-style: none; margin-top: 1.8rem; }
+    .about-checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7rem;
+      margin-bottom: 0.75rem;
+      font-size: 0.98rem;
+      color: rgba(255,255,255,0.8);
+    }
+    .about-checklist li::before {
+      content: '✔';
+      color: var(--cyan);
+      font-size: 0.9rem;
+      margin-top: 0.12rem;
+      flex-shrink: 0;
+    }
+
+    /* ── MARKETING / STRATEGY ── */
+    #strategy { background: var(--white); }
+    .strategy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+    .strategy-card {
+      border-left: 4px solid var(--cyan);
+      padding: 1.5rem 1.5rem 1.5rem 1.8rem;
+      background: var(--off-white);
+      border-radius: 0 10px 10px 0;
+    }
+    .strategy-card h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.6rem;
+    }
+    .strategy-card p { font-size: 0.9rem; color: #5A6B82; line-height: 1.65; }
+
+    /* ── COMPLIANCE ── */
+    #compliance { background: var(--off-white); }
+    .compliance-box {
+      background: var(--white);
+      border: 1px solid rgba(0,174,239,0.25);
+      border-radius: 12px;
+      padding: 2.5rem;
+      margin-top: 2.5rem;
+      max-width: 860px;
+    }
+    .compliance-box ul { list-style: none; margin-top: 1rem; }
+    .compliance-box ul li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid rgba(0,174,239,0.1);
+      font-size: 0.95rem;
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .compliance-box ul li:last-child { border-bottom: none; }
+    .compliance-box ul li span.tick { color: var(--cyan); font-size: 1rem; flex-shrink: 0; }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--navy); }
+    #contact .section-title { color: var(--white); }
+    .contact-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      margin-top: 3rem;
+      align-items: start;
+    }
+    @media (max-width: 768px) { .contact-inner { grid-template-columns: 1fr; gap: 2rem; } }
+    .contact-methods { display: flex; flex-direction: column; gap: 1.3rem; }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(0,174,239,0.2);
+      border-radius: 10px;
+      padding: 1.2rem 1.4rem;
+      color: var(--white);
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .contact-item:hover { background: rgba(0,174,239,0.12); border-color: var(--cyan); }
+    .contact-item-icon {
+      width: 44px; height: 44px;
+      background: rgba(0,174,239,0.18);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .contact-item-text strong {
+      display: block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 0.2rem;
+    }
+    .contact-item-text span { font-size: 1rem; color: var(--white); }
+
+    .wa-cta-box {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(0,174,239,0.2);
+      border-radius: 12px;
+      padding: 2.5rem;
+    }
+    .wa-cta-box h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.8rem;
+    }
+    .wa-cta-box p { color: rgba(255,255,255,0.68); font-size: 0.95rem; line-height: 1.7; margin-bottom: 1.5rem; }
+    .wa-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: #25D366;
+      color: #fff;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 1.05rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.9rem 1.8rem;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .wa-btn:hover { background: #1ebe5a; transform: translateY(-2px); }
+    .service-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem; }
+    .service-tag {
+      background: rgba(0,174,239,0.12);
+      color: var(--cyan);
+      border: 1px solid rgba(0,174,239,0.3);
+      border-radius: 20px;
+      padding: 0.3rem 0.85rem;
+      font-size: 0.8rem;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark);
+      padding: 2.5rem 5%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      text-align: center;
+      border-top: 1px solid rgba(0,174,239,0.12);
+    }
+    footer img { height: 50px; filter: brightness(0.9); }
+    .footer-compliance {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.38);
+      max-width: 600px;
+      line-height: 1.6;
+    }
+    .footer-divider {
+      width: 40px;
+      height: 1px;
+      background: rgba(0,174,239,0.25);
+    }
+    .footer-credit {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.22);
+      letter-spacing: 0.05em;
+    }
+    .footer-credit a {
+      color: rgba(0,174,239,0.5);
+      text-decoration: none;
+    }
+    .footer-credit a:hover { color: var(--cyan); }
+
+    /* ── RESPONSIVE NAV ── */
+    @media (max-width: 640px) {
+      nav ul { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <img src="logo.png" alt="Grant's Wellpoints & Boreholes" class="nav-logo" />
+    <ul>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#compliance">Compliance</a></li>
+      <li><a href="#contact" class="nav-cta">Contact Us</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO SLIDESHOW -->
+  <section id="hero">
+    <!-- 20 slides -->
+    <div class="slide active"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <img src="logo.png" alt="Grant's Wellpoints & Boreholes" class="hero-logo" />
+      <p class="hero-tagline">New Installations · Repairs · Re-sleeving · Pumps · Filtration</p>
+      <p class="hero-sub">Professional borehole and wellpoint solutions for Cape Town homes, farms and businesses. Clean, reliable workmanship with guidance aligned to City of Cape Town requirements.</p>
+      <div class="hero-btns">
+        <a href="https://wa.me/27724080842" class="btn-primary">📲 WhatsApp Us Now</a>
+        <a href="#services" class="btn-outline">Our Services</a>
+      </div>
+    </div>
+
+    <button class="slide-arrow prev" onclick="changeSlide(-1)">&#8249;</button>
+    <button class="slide-arrow next" onclick="changeSlide(1)">&#8250;</button>
+    <div class="slide-dots" id="dots"></div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div style="max-width:1200px;margin:0 auto">
+      <p class="section-label">What We Do</p>
+      <h2 class="section-title">Complete Water <span>Solutions</span></h2>
+      <p class="section-body">From drilling to ongoing maintenance — we cover every aspect of your borehole and wellpoint system, ensuring you get reliable water when you need it most.</p>
+
+      <div class="services-grid">
+        <div class="service-card">
+          <span class="service-icon">💧</span>
+          <h3>New Installations</h3>
+          <p>Professional borehole and wellpoint drilling for residential, farm and commercial properties. Site-specific assessment and clean workmanship throughout.</p>
+        </div>
+        <div class="service-card">
+          <span class="service-icon">🔧</span>
+          <h3>Repairs & Fault Finding</h3>
+          <p>Pump cutting out? Pressure dropping? We diagnose and repair all borehole and wellpoint faults — fast and reliably. Send us a photo of your setup via WhatsApp.</p>
+        </div>
+        <div class="service-card">
+          <span class="service-icon">⚡</span>
+          <h3>Pumps & Pressure Systems</h3>
+          <p>Correct pump sizing matched to your borehole yield — avoiding burnouts and low-pressure failures. Supply, installation, controllers and pressure tanks.</p>
+        </div>
+        <div class="service-card">
+          <span class="service-icon">🔄</span>
+          <h3>Re-sleeving</h3>
+          <p>Rehabilitation and re-sleeving of existing boreholes to extend service life and restore optimal water yield.</p>
+        </div>
+        <div class="service-card">
+          <span class="service-icon">🧪</span>
+          <h3>Filtration Set-ups</h3>
+          <p>Borehole water quality varies by area. We offer filtration system options tailored to your water profile and household needs.</p>
+        </div>
+        <div class="service-card">
+          <span class="service-icon">🛢️</span>
+          <h3>Water Tanks</h3>
+          <p>Storage tank supply and integration into your borehole or wellpoint system for enhanced water security and backup supply.</p>
+        </div>
+        <div class="service-card">
+          <span class="service-icon">🚁</span>
+          <h3>Drone Surveying</h3>
+          <p>Advanced drone technology for site assessment, helping identify optimal drilling locations and inspect existing infrastructure.</p>
+        </div>
+        <div class="service-card">
+          <span class="service-icon">📋</span>
+          <h3>Compliance Guidance</h3>
+          <p>Practical guidance aligned with City of Cape Town requirements — registration, signage and safe system separation so your installation is done right.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div style="max-width:1200px;margin:0 auto">
+      <div class="about-inner">
+        <div>
+          <p class="section-label" style="color:var(--light-cyan)">Who We Are</p>
+          <h2 class="section-title">Grant Meredith — <span>Your Water Specialist</span></h2>
+          <p class="section-body">Grant's Wellpoints &amp; Boreholes is a Cape Town–based water solutions specialist. We pride ourselves on doing the job correctly the first time — with professional workmanship, honest advice, and after-sales support that keeps your system running.</p>
+          <ul class="about-checklist">
+            <li>Residential, smallholding and commercial projects</li>
+            <li>Proper pump sizing to prevent costly failures</li>
+            <li>Testing, commissioning and handover support</li>
+            <li>Guidance aligned to City of Cape Town regulations</li>
+            <li>Fast response — WhatsApp us a photo of your problem</li>
+          </ul>
+        </div>
+        <div class="about-stats">
+          <div class="stat-box">
+            <div class="stat-num">20+</div>
+            <div class="stat-label">Years Experience</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">💧</div>
+            <div class="stat-label">Boreholes &amp; Wellpoints</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">⚡</div>
+            <div class="stat-label">Fast Turnaround</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">✔</div>
+            <div class="stat-label">Clean Workmanship</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARKETING STRATEGY PILLARS -->
+  <section id="strategy">
+    <div style="max-width:1200px;margin:0 auto">
+      <p class="section-label">Why Choose Us</p>
+      <h2 class="section-title">Water Security, <span>Done Right</span></h2>
+      <p class="section-body">Cape Town homeowners deserve more than just a hole in the ground. Our process is built around confidence — from initial assessment to after-sales support.</p>
+      <div class="strategy-grid">
+        <div class="strategy-card">
+          <h3>🏡 Homeowners</h3>
+          <p>Protect your home from outages and restrictions. Get consistent water pressure for garden irrigation and household backup, installed safely and correctly.</p>
+        </div>
+        <div class="strategy-card">
+          <h3>🌾 Farms &amp; Smallholdings</h3>
+          <p>Sustainable yield, correct pump sizing, reliable irrigation supply — designed around your land's specific needs and water profile.</p>
+        </div>
+        <div class="strategy-card">
+          <h3>🏢 Businesses &amp; Complexes</h3>
+          <p>Reduce downtime, add water redundancy and schedule preventative maintenance plans to keep your operations running without interruption.</p>
+        </div>
+        <div class="strategy-card">
+          <h3>🔁 Ongoing Support</h3>
+          <p>From drilling through to yield testing, pump supply and filtration options — we stay with you through the full lifecycle of your water system.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPLIANCE -->
+  <section id="compliance">
+    <div style="max-width:1200px;margin:0 auto">
+      <p class="section-label">Cape Town Regulations</p>
+      <h2 class="section-title">Compliance <span>&amp; Safety</span></h2>
+      <p class="section-body">Cape Town homeowners are regulation-aware post-drought. We provide installations that meet City of Cape Town requirements and guide you through every step.</p>
+      <div class="compliance-box">
+        <ul>
+          <li><span class="tick">✔</span> Boreholes and wellpoints are classified as alternative water sources under the City of Cape Town Water By-law (2010, as amended 2018) and must be registered with the City after installation.</li>
+          <li><span class="tick">✔</span> The City requires clear signage indicating non-potable water where applicable, particularly during restriction periods.</li>
+          <li><span class="tick">✔</span> No cross-connection may exist between municipal drinking water and alternative water systems — we ensure correct, safe separation.</li>
+          <li><span class="tick">✔</span> We provide practical guidance on signage, registration, and proper system identification — so your installation is compliant from day one.</li>
+          <li><span class="tick">✔</span> All work is carried out in accordance with local plumbing practices and safe workmanship standards.</li>
+        </ul>
+      </div>
+      <p style="margin-top:1.5rem;font-size:0.83rem;color:#8CA0B8;max-width:800px;line-height:1.65">
+        <em>Installations must comply with the City of Cape Town Water By-law. Borehole and wellpoint water is classified as non-potable and must be clearly identified where required. This page provides general guidance only and does not constitute legal advice.</em>
+      </p>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div style="max-width:1200px;margin:0 auto">
+      <p class="section-label" style="color:var(--light-cyan)">Get In Touch</p>
+      <h2 class="section-title" style="color:var(--white)">Ready for <span>Reliable Water?</span></h2>
+      <div class="contact-inner">
+        <div class="contact-methods">
+          <a href="https://wa.me/27724080842" class="contact-item" target="_blank">
+            <div class="contact-item-icon">📲</div>
+            <div class="contact-item-text">
+              <strong>WhatsApp (Preferred)</strong>
+              <span>072 408 0842</span>
+            </div>
+          </a>
+          <a href="tel:0217011786" class="contact-item">
+            <div class="contact-item-icon">📞</div>
+            <div class="contact-item-text">
+              <strong>Telephone</strong>
+              <span>021 701 1786</span>
+            </div>
+          </a>
+          <a href="mailto:grantmeredith@live.com" class="contact-item">
+            <div class="contact-item-icon">✉️</div>
+            <div class="contact-item-text">
+              <strong>Email</strong>
+              <span>grantmeredith@live.com</span>
+            </div>
+          </a>
+          <div class="contact-item" style="cursor:default">
+            <div class="contact-item-icon">📍</div>
+            <div class="contact-item-text">
+              <strong>Service Area</strong>
+              <span>Cape Town &amp; Surrounds</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="wa-cta-box">
+          <h3>Get a Free WhatsApp Quote</h3>
+          <p>Message us your suburb and property type (home / farm / business) and we'll advise the best next step for your water needs. You can even send a photo or video of your current setup for faster assistance.</p>
+          <a href="https://wa.me/27724080842?text=Hi%20Grant%2C%20I%27d%20like%20a%20quote%20for%20a%20borehole%2Fwellpoint." class="wa-btn" target="_blank">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            WhatsApp Grant Now
+          </a>
+          <div class="service-tags">
+            <span class="service-tag">Boreholes</span>
+            <span class="service-tag">Wellpoints</span>
+            <span class="service-tag">Pump Repairs</span>
+            <span class="service-tag">Filtration</span>
+            <span class="service-tag">Water Tanks</span>
+            <span class="service-tag">Drone Survey</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <img src="logo.png" alt="Grant's Wellpoints & Boreholes" />
+    <p class="footer-compliance">Alternative (non-potable) water systems are subject to City of Cape Town regulations. Borehole and wellpoint water must be clearly identified where required. All installations should comply with the City of Cape Town Water By-law.</p>
+    <div class="footer-divider"></div>
+    <p class="footer-credit">© 2025 Grant's Wellpoints &amp; Boreholes · Grant Meredith · 072 408 0842<br/>Website by <a href="#">Dennisys (Pty) Ltd</a></p>
+  </footer>
+
+  <script>
+    // ── SLIDESHOW ──
+    const slides = document.querySelectorAll('.slide');
+    const dotsContainer = document.getElementById('dots');
+    let current = 0;
+    let timer;
+
+    // Build dots
+    slides.forEach((_, i) => {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.addEventListener('click', () => goTo(i));
+      dotsContainer.appendChild(d);
+    });
+
+    function goTo(n) {
+      slides[current].classList.remove('active');
+      document.querySelectorAll('.dot')[current].classList.remove('active');
+      current = (n + slides.length) % slides.length;
+      slides[current].classList.add('active');
+      document.querySelectorAll('.dot')[current].classList.add('active');
+      resetTimer();
+    }
+
+    function changeSlide(dir) { goTo(current + dir); }
+
+    function resetTimer() {
+      clearInterval(timer);
+      timer = setInterval(() => goTo(current + 1), 5000);
+    }
+
+    resetTimer();
+
+    // ── NAV scroll effect ──
+    window.addEventListener('scroll', () => {
+      const nav = document.querySelector('nav');
+      if (window.scrollY > 80) {
+        nav.style.background = 'rgba(8,26,58,0.99)';
+      } else {
+        nav.style.background = 'rgba(8,26,58,0.96)';
+      }
+    });
+
+    // ── Animate sections on scroll ──
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.service-card, .strategy-card, .stat-box, .contact-item').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(24px)';
+      el.style.transition = 'opacity 0.55s ease, transform 0.55s ease';
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>
