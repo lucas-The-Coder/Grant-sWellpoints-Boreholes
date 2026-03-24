@@ -273,14 +273,31 @@
       margin-top: 3rem;
     }
     .service-card {
-      background: var(--white);
+      background: linear-gradient(145deg, #ffffff 0%, #e8f4fd 60%, #cce9f9 100%);
       border-radius: 10px;
       padding: 2rem 1.6rem;
       border-top: 4px solid var(--cyan);
       box-shadow: 0 2px 18px rgba(13,43,92,0.07);
-      transition: transform 0.25s, box-shadow 0.25s;
+      transition: transform 0.28s, box-shadow 0.28s, background 0.28s, border-top-color 0.28s;
+      position: relative;
+      overflow: hidden;
     }
-    .service-card:hover { transform: translateY(-5px); box-shadow: 0 8px 32px rgba(13,43,92,0.13); }
+    .service-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 50%, var(--cyan) 100%);
+      opacity: 0;
+      transition: opacity 0.28s;
+      border-radius: 10px;
+    }
+    .service-card:hover { transform: translateY(-6px); box-shadow: 0 12px 36px rgba(13,43,92,0.22); border-top-color: var(--light-cyan); }
+    .service-card:hover::before { opacity: 1; }
+    .service-card:hover .service-icon,
+    .service-card:hover h3,
+    .service-card:hover p { position: relative; z-index: 1; }
+    .service-card:hover h3 { color: var(--white); }
+    .service-card:hover p  { color: rgba(255,255,255,0.82); }
     .service-icon {
       font-size: 2.2rem;
       margin-bottom: 1rem;
@@ -362,9 +379,26 @@
     .strategy-card {
       border-left: 4px solid var(--cyan);
       padding: 1.5rem 1.5rem 1.5rem 1.8rem;
-      background: var(--off-white);
+      background: linear-gradient(135deg, #f4f8fc 0%, #daeef9 60%, #c2e4f6 100%);
       border-radius: 0 10px 10px 0;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.28s, box-shadow 0.28s, border-left-color 0.28s;
     }
+    .strategy-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 55%, var(--cyan) 100%);
+      opacity: 0;
+      transition: opacity 0.28s;
+    }
+    .strategy-card:hover { transform: translateX(5px); box-shadow: 4px 8px 28px rgba(13,43,92,0.18); border-left-color: var(--light-cyan); }
+    .strategy-card:hover::before { opacity: 1; }
+    .strategy-card:hover h3,
+    .strategy-card:hover p { position: relative; z-index: 1; }
+    .strategy-card:hover h3 { color: var(--white); }
+    .strategy-card:hover p  { color: rgba(255,255,255,0.82); }
     .strategy-card h3 {
       font-family: 'Barlow Condensed', sans-serif;
       font-weight: 700;
@@ -810,7 +844,7 @@
 
     function resetTimer() {
       clearInterval(timer);
-      timer = setInterval(() => goTo(current + 1), 5000);
+      timer = setInterval(() => goTo(current + 1), 1500);
     }
 
     resetTimer();
