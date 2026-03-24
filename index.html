@@ -80,49 +80,27 @@
       min-height: 600px;
       overflow: hidden;
     }
-    .slide {
+    /* ── SLIDESHOW IMAGE ── */
+    #slide-img {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
-      opacity: 0;
-      transition: opacity 1.2s ease;
-      background-size: cover;        /* always fills the frame */
-      background-position: center center;
-      background-repeat: no-repeat;
+      object-fit: cover;
+      object-position: center;
+      filter: brightness(1.15) saturate(1.05);
+      transition: opacity 0.5s ease;
     }
-    .slide.active { opacity: 1; }
-
-    /* Slides reference Pictures/1.jpeg … Pictures/20.jpeg */
-    .slide:nth-child(1)  { background-image: url('Pictures/1.jpeg'); }
-    .slide:nth-child(2)  { background-image: url('Pictures/2.jpeg'); }
-    .slide:nth-child(3)  { background-image: url('Pictures/3.jpeg'); }
-    .slide:nth-child(4)  { background-image: url('Pictures/4.jpeg'); }
-    .slide:nth-child(5)  { background-image: url('Pictures/5.jpeg'); }
-    .slide:nth-child(6)  { background-image: url('Pictures/6.jpeg'); }
-    .slide:nth-child(7)  { background-image: url('Pictures/7.jpeg'); }
-    .slide:nth-child(8)  { background-image: url('Pictures/8.jpeg'); }
-    .slide:nth-child(9)  { background-image: url('Pictures/9.jpeg'); }
-    .slide:nth-child(10) { background-image: url('Pictures/10.jpeg'); }
-    .slide:nth-child(11) { background-image: url('Pictures/11.jpeg'); }
-    .slide:nth-child(12) { background-image: url('Pictures/12.jpeg'); }
-    .slide:nth-child(13) { background-image: url('Pictures/13.jpeg'); }
-    .slide:nth-child(14) { background-image: url('Pictures/14.jpeg'); }
-    .slide:nth-child(15) { background-image: url('Pictures/15.jpeg'); }
-    .slide:nth-child(16) { background-image: url('Pictures/16.jpeg'); }
-    .slide:nth-child(17) { background-image: url('Pictures/17.jpeg'); }
-    .slide:nth-child(18) { background-image: url('Pictures/18.jpeg'); }
-    .slide:nth-child(19) { background-image: url('Pictures/19.jpeg'); }
-    .slide:nth-child(20) { background-image: url('Pictures/20.jpeg'); }
+    #slide-img.fade { opacity: 0; }
 
     .hero-overlay {
       position: absolute;
       inset: 0;
       background: linear-gradient(
         to bottom,
-        rgba(8,26,58,0.55) 0%,
-        rgba(8,26,58,0.25) 40%,
-        rgba(8,26,58,0.55) 100%
+        rgba(5,18,40,0.45) 0%,
+        rgba(5,18,40,0.15) 40%,
+        rgba(5,18,40,0.52) 100%
       );
       z-index: 1;
     }
@@ -150,20 +128,22 @@
     .hero-tagline {
       font-family: 'Barlow Condensed', sans-serif;
       font-size: clamp(1.1rem, 3vw, 1.6rem);
-      font-weight: 600;
+      font-weight: 700;
       color: var(--cyan);
       letter-spacing: 0.12em;
       text-transform: uppercase;
       margin-bottom: 1rem;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.7);
       animation: fadeUp 0.9s 0.2s ease both;
     }
 
     .hero-sub {
       font-size: clamp(0.95rem, 2vw, 1.1rem);
-      color: rgba(255,255,255,0.82);
+      color: rgba(255,255,255,0.96);
       max-width: 560px;
       line-height: 1.7;
       margin-bottom: 2.2rem;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.65);
       animation: fadeUp 0.9s 0.35s ease both;
     }
 
@@ -578,27 +558,7 @@
 
   <!-- HERO SLIDESHOW -->
   <section id="hero">
-    <!-- 20 slides -->
-    <div class="slide active"></div>
-    <div class="slide"></div>
-    <div class="slide"></div>
-    <div class="slide"></div>
-    <div class="slide"></div>
-    <div class="slide"></div>
-    <div class="slide"></div>
-    <div class="slide"></div>
-    <div class="slide"></div>
-    <div class="slide"></div>
-    <div class="slide"></div>
-    <div class="slide"></div>
-    <div class="slide"></div>
-    <div class="slide"></div>
-    <div class="slide"></div>
-    <div class="slide"></div>
-    <div class="slide"></div>
-    <div class="slide"></div>
-    <div class="slide"></div>
-    <div class="slide"></div>
+    <img id="slide-img" src="Pictures/1.jpeg" alt="Grant's Wellpoints & Boreholes" />
 
     <div class="hero-overlay"></div>
 
@@ -774,11 +734,11 @@
               <span>021 701 1786</span>
             </div>
           </a>
-          <a href="mailto:grantmeredith@live.com" class="contact-item">
+          <a href="/cdn-cgi/l/email-protection#204752414e544d45524544495448604c4956450e434f4d" class="contact-item">
             <div class="contact-item-icon">✉️</div>
             <div class="contact-item-text">
               <strong>Email</strong>
-              <span>grantmeredith@live.com</span>
+              <span><span class="__cf_email__" data-cfemail="711603101f051c14031415180519311d1807145f121e1c">[email&#160;protected]</span></span>
             </div>
           </a>
           <div class="contact-item" style="cursor:default">
@@ -818,15 +778,16 @@
     <p class="footer-credit">© 2025 Grant's Wellpoints &amp; Boreholes · Grant Meredith · 072 408 0842<br/>Website by <a href="#">Dennisys (Pty) Ltd</a></p>
   </footer>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     // ── SLIDESHOW ──
-    const slides = document.querySelectorAll('.slide');
+    const images = Array.from({length: 20}, (_, i) => `Pictures/${i + 1}.jpeg`);
+    const imgEl = document.getElementById('slide-img');
     const dotsContainer = document.getElementById('dots');
     let current = 0;
     let timer;
 
     // Build dots
-    slides.forEach((_, i) => {
+    images.forEach((_, i) => {
       const d = document.createElement('div');
       d.className = 'dot' + (i === 0 ? ' active' : '');
       d.addEventListener('click', () => goTo(i));
@@ -834,20 +795,22 @@
     });
 
     function goTo(n) {
-      slides[current].classList.remove('active');
-      document.querySelectorAll('.dot')[current].classList.remove('active');
-      current = (n + slides.length) % slides.length;
-      slides[current].classList.add('active');
-      document.querySelectorAll('.dot')[current].classList.add('active');
-      resetTimer();
-    }
-
-    function resetTimer() {
+      const next = (n + images.length) % images.length;
+      if (next === current) return;
+      // fade out
+      imgEl.classList.add('fade');
+      setTimeout(() => {
+        // swap src while invisible, then fade back in
+        current = next;
+        imgEl.src = images[current];
+        document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+        imgEl.classList.remove('fade');
+      }, 500);
       clearInterval(timer);
       timer = setInterval(() => goTo(current + 1), 1500);
     }
 
-    resetTimer();
+    timer = setInterval(() => goTo(current + 1), 1500);
 
     // ── NAV scroll effect ──
     window.addEventListener('scroll', () => {
@@ -861,12 +824,4 @@
 
     // ── Animate sections on scroll ──
     const observer = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.style.opacity = '1';
-          e.target.style.transform = 'translateY(0)';
-        }
-      });
-    }, { threshold: 0.12 });
-
-    document.querySelectorAll('.service-card, .strategy-card, .stat-b
+      entries.forEach(e =
