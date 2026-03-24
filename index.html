@@ -557,7 +557,7 @@
 
   <!-- HERO SLIDESHOW -->
   <section id="hero">
-    <img id="slide-img" src="Pictures/1.jpeg" alt="Grant's Wellpoints & Boreholes" />
+    <img id="slide-img" src="1.jpeg" alt="Grant's Wellpoints & Boreholes" />
 
     <div class="hero-overlay"></div>
 
@@ -780,7 +780,7 @@
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     // ── SLIDESHOW ──
     var slideImages = [];
-    for (var si = 1; si <= 20; si++) { slideImages.push('Pictures/' + si + '.jpeg'); }
+    [1,2,3,4,5,6,7,11,14,16,17,18,19,20].forEach(function(n){ slideImages.push(n + '.jpeg'); });
     var slideImg = document.getElementById('slide-img');
     var slideDots = document.getElementById('dots');
     var slideIdx = 0;
