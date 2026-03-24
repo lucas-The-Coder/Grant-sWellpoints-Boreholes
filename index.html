@@ -73,24 +73,26 @@
     }
     .nav-cta:hover { background: var(--light-cyan) !important; }
 
-    /* ── HERO / SLIDESHOW ── */
-    #hero {
-      position: relative;
-      height: 100vh;
-      min-height: 600px;
-      overflow: hidden;
-    }
-    /* ── SLIDESHOW IMAGE ── */
-    #slide-img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-      filter: brightness(1.15) saturate(1.05);
-      opacity: 1;
-    }
+  /* ── HERO / SLIDESHOW ── */
+  #hero {
+    position: relative;
+    height: 100vh;
+    min-height: 600px;
+    overflow: hidden;
+  }
+  
+  /* ── SLIDESHOW IMAGE ── */
+  #slide-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    filter: brightness(1.15) saturate(1.05);
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+  }
 
     .hero-overlay {
       position: absolute;
@@ -778,49 +780,72 @@
   </footer>
 
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-    // ── SLIDESHOW ──
-    var slideImages = [];
-    [1,2,3,4,5,6,7,11,14,16,17,18,19,20].forEach(function(n){ slideImages.push(n + '.jpeg'); });
-    var slideImg = document.getElementById('slide-img');
-    var slideDots = document.getElementById('dots');
-    var slideIdx = 0;
-    var slideBusy = false;
-
-    for (var di = 0; di < slideImages.length; di++) {
-      var dot = document.createElement('div');
-      dot.className = di === 0 ? 'dot active' : 'dot';
-      (function(idx) {
-        dot.addEventListener('click', function() { slideAdvance(idx); });
-      })(di);
-      slideDots.appendChild(dot);
+     // ── SLIDESHOW ──
+  var slideImages = [];
+  [1,2,3,4,5,6,7,11,14,16,17,18,19,20]
+    .forEach(function(n){ slideImages.push(n + '.jpeg'); });
+  
+  var slideImg = document.getElementById('slide-img');
+  var slideDots = document.getElementById('dots');
+  var slideIdx = 0;
+  var slideBusy = false;
+  
+  // ── PRELOAD IMAGES (this fixes flicker) ──
+  for (var i = 0; i < slideImages.length; i++) {
+    var img = new Image();
+    img.src = slideImages[i];
+  }
+  
+  // ── DOTS ──
+  for (var di = 0; di < slideImages.length; di++) {
+    var dot = document.createElement('div');
+    dot.className = di === 0 ? 'dot active' : 'dot';
+  
+    (function(idx) {
+      dot.addEventListener('click', function() {
+        slideAdvance(idx);
+      });
+    })(di);
+  
+    slideDots.appendChild(dot);
+  }
+  
+  function slideUpdateDots() {
+    var dots = slideDots.querySelectorAll('.dot');
+    for (var i = 0; i < dots.length; i++) {
+      dots[i].className = i === slideIdx ? 'dot active' : 'dot';
     }
-
-    function slideUpdateDots() {
-      var dots = slideDots.querySelectorAll('.dot');
-      for (var i = 0; i < dots.length; i++) {
-        dots[i].className = i === slideIdx ? 'dot active' : 'dot';
-      }
-    }
-
-    function slideAdvance(next) {
-      if (slideBusy) return;
-      next = ((next % slideImages.length) + slideImages.length) % slideImages.length;
-      slideBusy = true;
-      slideImg.style.transition = 'opacity 0.5s ease';
-      slideImg.style.opacity = '0';
-      setTimeout(function() {
-        slideIdx = next;
-        slideImg.src = slideImages[slideIdx];
-        slideUpdateDots();
-        slideImg.style.opacity = '1';
-        setTimeout(function() { slideBusy = false; }, 550);
+  }
+  
+  function slideAdvance(next) {
+    if (slideBusy) return;
+    slideBusy = true;
+  
+    next = (next + slideImages.length) % slideImages.length;
+  
+    slideImg.style.opacity = 0;
+  
+    setTimeout(function () {
+      slideIdx = next;
+      slideImg.src = slideImages[slideIdx];
+      slideUpdateDots();
+  
+      requestAnimationFrame(function () {
+        slideImg.style.opacity = 1;
+      });
+  
+      setTimeout(function () {
+        slideBusy = false;
       }, 500);
-    }
-
-    setInterval(function() {
-      slideAdvance((slideIdx + 1) % slideImages.length);
-    }, 1500);
-
+  
+    }, 500);
+  }
+  
+  // ── AUTO PLAY ──
+  setInterval(function () {
+    slideAdvance(slideIdx + 1);
+  }, 1500);
+    
     // ── NAV scroll effect ──
     window.addEventListener('scroll', () => {
       const nav = document.querySelector('nav');
